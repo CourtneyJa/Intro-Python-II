@@ -1,5 +1,7 @@
+import sys
 from room import Room
 from player import Player
+from item import Item
 
 # Declare all the rooms
 
@@ -39,7 +41,23 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
-player = Player('Mulder', room['outside'])
+
+#items
+item = {
+    'sword' : Item('Sword', 'Sword of Omens'),
+    'lamp' : Item('Lamp', 'long burning oil lamp'),
+    'coins' : Item('Gold', 'a pound of gold coins'),
+    'metal' : Item('Metal', 'iron to make a new sword'),
+    'meat' : Item('Meat', 'leg of lamb'),
+    'map' : Item('Atlas of Lands', 'map of the worlds')
+}
+
+#items to rooms:
+room['outside'].items.append(item['lamp'])
+room['foyer'].items.append(item['meat'])
+room['overlook'].items.append(item['sword'])
+room['narrow'].items.append(item['metal'])
+room['treasure'].items.append(item['coins'])
 
 # Write a loop that:
 #
@@ -52,15 +70,31 @@ player = Player('Mulder', room['outside'])
 #
 # If the user enters "q", quit the game.
 
-print(player.room)
-directions = ['n', 's', 'e', 'w']
+actions = {
+    'cardinals': ['n', 's', 'e', 'w'],
+    'play_act': ['on_grab', 'on_drop'],
+    'quit': ['q']
+}
 
-while True:
-    entry = input('Enter a direction to move your player : ')
-    if entry in directions:
-        player.move(entry)
-    elif entry =='q':
-        print('See you later!')
-        break
-    else:
-        print('Sorry, direction not found')
+def start_play():
+    running = True 
+    add_name = input('Brave hero, please enter your name')    
+    player1 = Player(add_name, room['outside'])  
+
+    print(
+        f'Welcome {player1.name}!\nGet started on your quest\nuse [n] [s] [e] [w] to move player')
+    while (running is not False):
+        player1._show_current_room()
+
+        add_name = input(
+            'Choose your next move\n >> ')
+
+        if add_name in actions['cardinals']:
+            player1._move(add_name)
+
+        if add_name in actions['quit']:
+            running = False
+            print('You have quit the game. Goodbye!')
+
+if __name__ == "__main__":
+    start_play()
